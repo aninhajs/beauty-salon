@@ -3,7 +3,7 @@
 // No sever component, não consigo adicionar interações do lado do cliente diretamente
 // Para adicionar interações do lado do cliente, é necessário usar client components
 // Basta adicionar "use client" no topo do arquivo do componente que precisa ser client component
-// "use client"
+"use client"
 
 import { useState } from "react"
 import { Button } from "@/app/_components/ui/button"
