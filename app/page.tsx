@@ -7,11 +7,38 @@
 
 import { useState } from "react"
 import { Button } from "@/app/_components/ui/button"
+import Header from "@/app/_components/ui/header"
+import { Input } from "@base-ui/react"
+import Image from "next/image"
+import { SearchIcon } from "lucide-react"
 
-const Page = () => {
-  const [] = useState()
+const Home = () => {
+  return (
+    <div>
+      <Header />
+      <div className="p-5 text-xl font-bold">
+        <h2 className="text-xl font-bold">Olá, Ana jeize!</h2>
+        <p>Quarta-feira, 30 de setembro.</p>
 
-  return <Button>Teste</Button>
+        <div className="mt-6 flex items-center gap-2">
+          <Input placeholder="Faça sua busca..." />
+          <Button>
+            <SearchIcon />
+          </Button>
+        </div>
+
+        <div className="relative mt-6 h-[150px] w-full">
+          <Image
+            src="/banner-01.png"
+            fill
+            alt="Banner"
+            style={{ objectFit: "cover" }}
+            className="rounded-xl"
+          />
+        </div>
+      </div>
+    </div>
+  )
 }
 
-export default Page
+export default Home
