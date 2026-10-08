@@ -3,19 +3,23 @@
 // No sever component, não consigo adicionar interações do lado do cliente diretamente
 // Para adicionar interações do lado do cliente, é necessário usar client components
 // Basta adicionar "use client" no topo do arquivo do componente que precisa ser client component
-"use client"
+import { db } from "@/app/lib/prisma"
+import BarbershopItem from "@/app/_components/ui/Barbershop-item"
 
-import { useState } from "react"
-import { Button } from "@/app/_components/ui/button"
+// import { useState } from "react"
+import { Button } from "@/app/_components/ui/ui/button"
 import Header from "@/app/_components/ui/header"
-import { Input } from "@base-ui/react"
+import { Input } from "@/app/_components/ui/ui/input"
 import Image from "next/image"
-import { Avatar, AvatarImage } from "@/app/_components/ui/avatar"
-import { Badge } from "@/app/_components/ui/badge"
+import { Avatar, AvatarImage } from "@/app/_components/ui/ui/avatar"
+import { Badge } from "@/app/_components/ui/ui/badge"
 import { SearchIcon } from "lucide-react"
-import { Card, CardContent } from "./_components/ui/card"
+import { Card, CardContent } from "@/app/_components/ui/ui/card"
 
-const Home = () => {
+const Home = async () => {
+  // Chamando meu banco
+  const barbershops = await db.barbershop.findMany({})
+
   return (
     <div>
       <Header />
@@ -27,14 +31,17 @@ const Home = () => {
 
         {/* Busca */}
         <div className="mt-6 flex items-center gap-2">
-          <Input placeholder="Faça sua busca..." />
-          <Button>
+          <Input
+            className="border border-gray-200"
+            placeholder="Faça sua busca..."
+          />
+          <Button className="ml-auto bg-purple-600">
             <SearchIcon />
           </Button>
         </div>
 
         {/* Banner */}
-        <div className="relative mt-6 h-[150px] w-full">
+        <div className="relative mt-6 h-37.5 w-full">
           <Image
             src="/banner-02.png"
             fill
@@ -45,6 +52,9 @@ const Home = () => {
         </div>
 
         {/* Agenda */}
+
+        <h2 className="mt-6 text-lg font-bold uppercase">Agendamentos</h2>
+
         <Card className="mt-6">
           <CardContent className="flex justify-between">
             {/* Div esdquerda */}
@@ -70,6 +80,13 @@ const Home = () => {
             </div>
           </CardContent>
         </Card>
+
+        <h2 className="mt-6 text-lg font-bold uppercase">Recomendados</h2>
+        <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
+          {barbershops.map((barbershop) => (
+            <BarbershopItem key={barbershop.id} barbershop={barbershop} />
+          ))}
+        </div>
       </div>
     </div>
   )

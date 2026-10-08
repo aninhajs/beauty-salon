@@ -1,7 +1,14 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  /* Aqui permito que o next.js carregue imagens de domínios remotos */
+  images: {
+    remotePatterns: [
+      {
+        hostname: "utfs.io",
+      },
+    ],
+  },
+}
 
-export default nextConfig;
+export default nextConfig
