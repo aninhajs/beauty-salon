@@ -7,18 +7,24 @@ import { db } from "@/app/lib/prisma"
 import BarbershopItem from "@/app/_components/ui/Barbershop-item"
 
 // import { useState } from "react"
+import { quickSearchList } from "@/app/_constants/search"
 import { Button } from "@/app/_components/ui/ui/button"
 import Header from "@/app/_components/ui/header"
 import { Input } from "@/app/_components/ui/ui/input"
 import Image from "next/image"
-import { Avatar, AvatarImage } from "@/app/_components/ui/ui/avatar"
-import { Badge } from "@/app/_components/ui/ui/badge"
 import { SearchIcon } from "lucide-react"
 import { Card, CardContent } from "@/app/_components/ui/ui/card"
+import BookingItem from "./_components/ui/booking-item"
 
 const Home = async () => {
   // Chamando meu banco
   const barbershops = await db.barbershop.findMany({})
+  const popularBarbershops = await db.barbershop.findMany({
+    orderBy: {
+      name: "desc",
+    },
+    take: 5,
+  })
 
   return (
     <div>
@@ -40,6 +46,21 @@ const Home = async () => {
           </Button>
         </div>
 
+        {/* Busca rápida */}
+        <div className="mt-6 flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+          {quickSearchList.map((item) => (
+            <Button key={item.title} className="gap-2" variant="secondary">
+              <Image
+                src={item.imageUrl}
+                alt={item.title}
+                width={14}
+                height={16}
+              />
+              {item.title}
+            </Button>
+          ))}
+        </div>
+
         {/* Banner */}
         <div className="relative mt-6 h-37.5 w-full">
           <Image
@@ -53,33 +74,7 @@ const Home = async () => {
 
         {/* Agenda */}
 
-        <h2 className="mt-6 text-lg font-bold uppercase">Agendamentos</h2>
-
-        <Card className="mt-6">
-          <CardContent className="flex justify-between">
-            {/* Div esdquerda */}
-            <div className="flex flex-col gap-2 py-5">
-              <Badge className="w-fit bg-purple-600 text-white">
-                Confirmado
-              </Badge>
-              <h3 className="font-bold">Corte de Cabelo</h3>
-
-              <div className="flex items-center gap-2">
-                <Avatar className="h-6 w-6">
-                  <AvatarImage src="/Ana01.png" alt="Ana Jeize" />
-                </Avatar>
-                <p className="text-sm">Beauty Salon</p>
-              </div>
-            </div>
-
-            {/* Div direita */}
-            <div className="flex flex-col items-center justify-center border-l-2 border-solid px-5">
-              <p className="text-sm">Setembro</p>
-              <p className="text-2xl font-bold">30</p>
-              <p className="text-sm">20:00</p>
-            </div>
-          </CardContent>
-        </Card>
+        <BookingItem />
 
         <h2 className="mt-6 text-lg font-bold uppercase">Recomendados</h2>
         <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
@@ -87,6 +82,24 @@ const Home = async () => {
             <BarbershopItem key={barbershop.id} barbershop={barbershop} />
           ))}
         </div>
+
+        <h2 className="mt-6 text-lg font-bold uppercase">Populares</h2>
+        <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
+          {popularBarbershops.map((barbershop) => (
+            <BarbershopItem key={barbershop.id} barbershop={barbershop} />
+          ))}
+        </div>
+
+        {/* Footer */}
+        <footer>
+          <Card className="mt-6 p-0">
+            <CardContent className="px-5 py-6">
+              <p className="text-center text-sm text-gray-500">
+                © 2026 Beauty Salon. Todos os direitos reservados.
+              </p>
+            </CardContent>
+          </Card>
+        </footer>
       </div>
     </div>
   )

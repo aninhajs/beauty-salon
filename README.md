@@ -193,9 +193,9 @@ Abrirá em `http://localhost:5555`
 ### Importar Prisma Client
 
 ```typescript
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client"
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 ```
 
 ### Exemplos de Queries
@@ -208,7 +208,7 @@ const user = await prisma.user.create({
     email: "usuario@example.com",
     name: "João Silva",
   },
-});
+})
 ```
 
 #### Criar Barbershop com Serviços
@@ -233,7 +233,7 @@ const barbershop = await prisma.barbershop.create({
     },
   },
   include: { services: true },
-});
+})
 ```
 
 #### Fazer Agendamento
@@ -249,7 +249,7 @@ const booking = await prisma.booking.create({
     user: true,
     service: true,
   },
-});
+})
 ```
 
 #### Buscar Barbershops com Serviços
@@ -259,7 +259,7 @@ const barbershops = await prisma.barbershop.findMany({
   include: {
     services: true,
   },
-});
+})
 ```
 
 #### Buscar Agendamentos de um Usuário
@@ -276,7 +276,7 @@ const bookings = await prisma.booking.findMany({
       },
     },
   },
-});
+})
 ```
 
 ## 📝 Histórico de Migrações
@@ -331,12 +331,122 @@ Abrirá em `http://localhost:3000`
 $env:DATABASE_URL="postgresql://postgres.qvbxueupipsvrmfjqhfp:Anajeize38%40@aws-0-us-east-1.pooler.supabase.com:5432/postgres"; npx prisma migrate deploy
 ```
 
+## 🎨 Setup do Frontend (29/09/2026)
+
+### Componentes UI com shadcn/ui
+
+Instalação do shadcn/ui com Base UI (Recommended) e preset Nova:
+
+```bash
+npx shadcn@latest add button
+```
+
+**Configurações Realizadas:**
+
+- ✅ Library: Base UI (Recommended)
+- ✅ Preset: Nova
+- ✅ Componente Button adicionado
+
+### Tailwind CSS v4
+
+Configuração do Tailwind CSS v4 com tema customizado:
+
+**1. Criado `tailwind.config.ts`:**
+
+```typescript
+- Mapeamento de cores CSS variables → Tailwind utilities
+- Configuração de borderRadius customizado
+- Cores: background, foreground, card, primary, secondary, muted, accent, destructive, border, input, ring
+```
+
+**2. Atualizado `postcss.config.mjs`:**
+
+```javascript
+plugins: {
+  "@tailwindcss/postcss": {},
+}
+```
+
+**3. Atualizado `app/globals.css`:**
+
+- Sintaxe Tailwind v4: `@import "tailwindcss/preflight"` em vez de `@tailwind base`
+- Remoção de `@tailwind components` (descontinuado no v4)
+- Mantido `@tailwind utilities`
+- Variáveis CSS no tema dark
+
+### Estrutura de Componentes
+
+```
+app/
+├── _components/
+│   └── ui/
+│       └── button.tsx      (Componente Button shadcn/ui)
+├── _lib/
+│   └── utils.ts            (Utilitários como `cn()`)
+├── layout.tsx              (Root Layout)
+├── page.tsx                (Página principal com "use client")
+└── globals.css             (Estilos globais)
+```
+
+### Client Components
+
+**Adicionado `"use client"` no `app/page.tsx`:**
+
+- Necessário para usar hooks como `useState()`
+- Exemplo: Componente com contador usando `Button` do shadcn/ui
+
+### Git Hooks com Husky
+
+Configuração de git hooks para qualidade de código:
+
+**1. Instalado Husky e lint-staged:**
+
+- husky: ^9.1.7
+- lint-staged: ^16.4.0
+
+**2. Criado `.lintstagedrc.json`:**
+
+```json
+{
+  "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+  "*.{json,css}": ["prettier --write"]
+}
+```
+
+**3. Configurado `package.json`:**
+
+```json
+"scripts": {
+  "prepare": "husky"
+}
+```
+
+**Pre-commit Hook:**
+
+- Executa eslint --fix nos arquivos .ts/.tsx
+- Executa prettier --write para formatação
+- Previne commits com código malformatado
+
+### Primeiro Commit
+
+```bash
+git commit -m "chore: Adicionando setup git hooks"
+```
+
+✅ Configuração completada com sucesso!
+
 ## 📚 Recursos Úteis
 
 - [Documentação Prisma](https://www.prisma.io/docs/)
 - [Prisma Schema Reference](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference)
 - [Supabase PostgreSQL](https://supabase.com/docs/guides/database)
 - [Next.js Documentação](https://nextjs.org/docs)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [Tailwind CSS v4](https://tailwindcss.com/docs)
+- [Husky - Git Hooks](https://typicode.github.io/husky/)
+- [lint-staged](https://github.com/okonet/lint-staged)
+- [ESLint](https://eslint.org/docs/latest/)
+- [Prettier](https://prettier.io/docs/en/)
 
 ## 📝 Próximos Passos
 
