@@ -89,17 +89,6 @@ const Home = async () => {
             <BarbershopItem key={barbershop.id} barbershop={barbershop} />
           ))}
         </div>
-
-        {/* Footer */}
-        <footer>
-          <Card className="mt-6 p-0">
-            <CardContent className="px-5 py-6">
-              <p className="text-center text-sm text-gray-500">
-                © 2026 Beauty Salon. Todos os direitos reservados.
-              </p>
-            </CardContent>
-          </Card>
-        </footer>
       </div>
     </div>
   )
