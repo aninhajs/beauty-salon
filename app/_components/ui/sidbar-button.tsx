@@ -3,7 +3,21 @@
 import { quickSearchList } from "@/app/_constants/search"
 import Image from "next/image"
 import Link from "next/link"
-import { MenuIcon, HomeIcon, Calendar1Icon, LogOutIcon } from "lucide-react"
+import {
+  MenuIcon,
+  HomeIcon,
+  Calendar1Icon,
+  LogOutIcon,
+  LogInIcon,
+} from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog"
 import { Button, buttonVariants } from "./button"
 import { Avatar, AvatarImage } from "./ui/avatar"
 import {
@@ -26,7 +40,37 @@ const SidebarButton = () => {
           <SheetTitle className="text-left font-bold">Menu</SheetTitle>
         </SheetHeader>
 
-        <div className="flex items-center border-b border-solid py-5">
+        <div className="flex items-center justify-between gap-3 border-b border-solid py-5">
+          <h2 className="font-bold">Olá, faça seu login</h2>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="icon">
+                <LogInIcon size={18} />
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className="w-[90%]">
+              <DialogHeader>
+                <DialogTitle>Faça login na plataforma</DialogTitle>
+                <DialogDescription>
+                  Por favor, insira suas credenciais para acessar a plataforma.
+                </DialogDescription>
+              </DialogHeader>
+
+              <Button variant="outline" className="w-full gap-1 font-bold">
+                <Image
+                  src="/google.svg"
+                  height={18}
+                  width={18}
+                  alt="Login Icon"
+                />
+                Google
+              </Button>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* <div className="flex items-center border-b border-solid py-5">
           <Avatar>
             <AvatarImage src="/Ana01.png" alt="User Avatar" />
           </Avatar>
@@ -35,7 +79,7 @@ const SidebarButton = () => {
             <p className="font-bold">Ana Jeize</p>
             <p className="text-muted-foreground text-sm">ana@example.com</p>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex flex-col gap-1 border-b border-solid py-5">
           <SheetClose
