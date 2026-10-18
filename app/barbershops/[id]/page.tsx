@@ -1,13 +1,7 @@
 import { db } from "@/app/lib/prisma"
 import ServiceItem from "@/app/_components/ui/service-item"
-import { Button } from "@base-ui/react"
-import {
-  ChevronLeftIcon,
-  MapPinIcon,
-  MenuIcon,
-  SmartphoneIcon,
-  StarIcon,
-} from "lucide-react"
+import SidebarButton from "@/app/_components/ui/sidbar-button"
+import { ChevronLeftIcon, MapPinIcon, StarIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -52,9 +46,9 @@ const BarberShops = async ({ params }: BarberShops) => {
           <ChevronLeftIcon aria-hidden="true" />
         </Link>
 
-        <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/80 absolute top-4 right-4 inline-flex h-9 w-9 items-center justify-center rounded-md">
-          <MenuIcon />
-        </Button>
+        <div className="absolute top-4 right-4">
+          <SidebarButton />
+        </div>
       </div>
 
       {/* título e informações do salão */}
