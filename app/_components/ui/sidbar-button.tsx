@@ -131,10 +131,14 @@ const SidebarButton = () => {
 
         <div className="flex flex-col gap-1 border-b border-solid py-5">
           {quickSearchList.map((option) => (
-            <Button
+            <SheetClose
               key={option.title}
-              className="justify-start gap-2"
-              variant="ghost"
+              nativeButton={false}
+              render={<Link href={`/barbershops?service=${option.title}`} />}
+              className={buttonVariants({
+                variant: "ghost",
+                className: "w-full justify-start gap-2",
+              })}
             >
               <Image
                 src={option.imageUrl}
@@ -143,7 +147,7 @@ const SidebarButton = () => {
                 alt={option.title}
               />
               {option.title}
-            </Button>
+            </SheetClose>
           ))}
         </div>
 
