@@ -11,14 +11,7 @@ import {
   LogOutIcon,
   LogInIcon,
 } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog"
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
 import { Button, buttonVariants } from "./button"
 import {
   Sheet,
@@ -28,15 +21,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet"
-import { signIn, signOut } from "next-auth/react"
+import { signOut } from "next-auth/react"
 import { Avatar } from "@base-ui/react"
+import SignInDialog from "./sign-in-dialog"
 
 const SidebarButton = () => {
   const { data, status } = useSession()
-  // Função para chamar o botão do google login
-  const handleGoogleLogin = async () => {
-    await signIn("google")
-  }
   return (
     <Sheet>
       <SheetTrigger render={<Button size="icon" variant="outline" />}>
@@ -84,27 +74,7 @@ const SidebarButton = () => {
               </DialogTrigger>
 
               <DialogContent className="w-[90%]">
-                <DialogHeader>
-                  <DialogTitle>Faça login na plataforma</DialogTitle>
-                  <DialogDescription>
-                    Por favor, insira suas credenciais para acessar a
-                    plataforma.
-                  </DialogDescription>
-                </DialogHeader>
-
-                <Button
-                  variant="outline"
-                  className="w-full gap-1 font-bold"
-                  onClick={handleGoogleLogin}
-                >
-                  <Image
-                    src="/google.svg"
-                    height={18}
-                    width={18}
-                    alt="Login Icon"
-                  />
-                  Google
-                </Button>
+                <SignInDialog />
               </DialogContent>
             </Dialog>
           </div>

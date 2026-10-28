@@ -8,13 +8,11 @@ import BarbershopItem from "@/app/_components/ui/Barbershop-item"
 
 // import { useState } from "react"
 import { quickSearchList } from "@/app/_constants/search"
-import { Button } from "@/app/_components/ui/ui/button"
+import { buttonVariants } from "@/app/_components/ui/ui/button"
 import Search from "@/app/_components/ui/search"
 import Header from "@/app/_components/ui/header"
-import { Input } from "@/app/_components/ui/ui/input"
 import Image from "next/image"
-import { Link, SearchIcon } from "lucide-react"
-import { Card, CardContent } from "@/app/_components/ui/ui/card"
+import Link from "next/link"
 import BookingItem from "./_components/ui/booking-item"
 
 const Home = async () => {
@@ -44,17 +42,22 @@ const Home = async () => {
         {/* Busca rápida */}
         <div className="mt-6 flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
           {quickSearchList.map((item) => (
-            <Button key={item.title} className="gap-2" variant="secondary">
-              <Link href={`/barbershops?service=${item.title}`}>
-                <Image
-                  src={item.imageUrl}
-                  alt={item.title}
-                  width={14}
-                  height={16}
-                />
-                {item.title}
-              </Link>
-            </Button>
+            <Link
+              key={item.title}
+              href={`/barbershops?service=${encodeURIComponent(item.title)}`}
+              className={buttonVariants({
+                variant: "secondary",
+                className: "gap-2",
+              })}
+            >
+              <Image
+                src={item.imageUrl}
+                alt={item.title}
+                width={14}
+                height={16}
+              />
+              {item.title}
+            </Link>
           ))}
         </div>
 
