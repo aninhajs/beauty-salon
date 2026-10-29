@@ -93,10 +93,17 @@ const SidebarButton = () => {
             Inicio
           </SheetClose>
 
-          <Button variant="ghost" className="justify-start gap-2">
+          <SheetClose
+            render={<Link href="/bookings" />}
+            nativeButton={false}
+            className={buttonVariants({
+              variant: "ghost",
+              className: "w-full justify-start gap-2",
+            })}
+          >
             <Calendar1Icon size={18} />
             Agendamentos
-          </Button>
+          </SheetClose>
         </div>
 
         <div className="flex flex-col gap-1 border-b border-solid py-5">

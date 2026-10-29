@@ -4,6 +4,8 @@
 // Para adicionar interações do lado do cliente, é necessário usar client components
 // Basta adicionar "use client" no topo do arquivo do componente que precisa ser client component
 import { db } from "@/app/lib/prisma"
+import { getServerSession } from "next-auth"
+import { authOptions } from "./lib/auth"
 import BarbershopItem from "@/app/_components/ui/Barbershop-item"
 
 // import { useState } from "react"
@@ -16,14 +18,27 @@ import Link from "next/link"
 import BookingItem from "./_components/ui/booking-item"
 
 const Home = async () => {
-  // Chamando meu banco
+  const session = await getServerSession(authOptions)
   const barbershops = await db.barbershop.findMany({})
   const popularBarbershops = await db.barbershop.findMany({
     orderBy: {
       name: "desc",
     },
-    take: 5,
   })
+  const Bookings = session?.user
+    ? await db.booking.findMany({
+        where: {
+          userId: (session.user as { id: string }).id,
+        },
+        include: {
+          service: {
+            include: {
+              barbershop: true,
+            },
+          },
+        },
+      })
+    : []
 
   return (
     <div>
@@ -73,8 +88,12 @@ const Home = async () => {
         </div>
 
         {/* Agenda */}
-
-        <BookingItem />
+        <h2 className="mt-6 text-lg font-bold uppercase">Agendamentos</h2>
+        <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+          {Bookings.map((booking) => (
+            <BookingItem key={booking.id} booking={booking} />
+          ))}
+        </div>
 
         <h2 className="mt-6 text-lg font-bold uppercase">Recomendados</h2>
         <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
