@@ -9,7 +9,7 @@ import { authOptions } from "./lib/auth"
 import BarbershopItem from "@/app/_components/ui/Barbershop-item"
 
 // import { useState } from "react"
-import { quickSearchList } from "@/app/_constants/search"
+import { quickSearchOptions } from "@/app/_constants/search"
 import { buttonVariants } from "@/app/_components/ui/ui/button"
 import Search from "@/app/_components/ui/search"
 import Header from "@/app/_components/ui/header"
@@ -56,7 +56,7 @@ const Home = async () => {
 
         {/* Busca rápida */}
         <div className="mt-6 flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
-          {quickSearchList.map((item) => (
+          {quickSearchOptions.map((item) => (
             <Link
               key={item.title}
               href={`/barbershops?service=${encodeURIComponent(item.title)}`}
@@ -91,7 +91,16 @@ const Home = async () => {
         <h2 className="mt-6 text-lg font-bold uppercase">Agendamentos</h2>
         <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
           {Bookings.map((booking) => (
-            <BookingItem key={booking.id} booking={booking} />
+            <BookingItem
+              key={booking.id}
+              booking={{
+                ...booking,
+                service: {
+                  ...booking.service,
+                  price: booking.service.price.toNumber(),
+                },
+              }}
+            />
           ))}
         </div>
 

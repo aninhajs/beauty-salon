@@ -52,11 +52,29 @@ const Booking = async () => {
         <h2 className="text-lg font-semibold">Confirmados</h2>
 
         {confirmedBookings.map((booking) => (
-          <BookingItem key={booking.id} booking={booking} />
+          <BookingItem
+            key={booking.id}
+            booking={{
+              ...booking,
+              service: {
+                ...booking.service,
+                price: booking.service.price.toNumber(),
+              },
+            }}
+          />
         ))}
         <h2 className="text-lg font-semibold">Finalizados</h2>
         {concludedBookings.map((booking) => (
-          <BookingItem key={booking.id} booking={booking} />
+          <BookingItem
+            key={booking.id}
+            booking={{
+              ...booking,
+              service: {
+                ...booking.service,
+                price: booking.service.price.toNumber(),
+              },
+            }}
+          />
         ))}
       </div>
     </>

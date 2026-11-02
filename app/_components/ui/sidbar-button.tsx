@@ -1,6 +1,6 @@
 "use client"
 
-import { quickSearchList } from "@/app/_constants/search"
+import { quickSearchOptions } from "@/app/_constants/search"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
@@ -107,7 +107,7 @@ const SidebarButton = () => {
         </div>
 
         <div className="flex flex-col gap-1 border-b border-solid py-5">
-          {quickSearchList.map((option) => (
+          {quickSearchOptions.map((option) => (
             <SheetClose
               key={option.title}
               nativeButton={false}

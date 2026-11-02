@@ -33,16 +33,22 @@ import { toast } from "sonner"
 import { useState } from "react"
 import BookingSummary from "./booking-summary"
 
-interface BookingItemProps {
-  booking: Prisma.BookingGetPayload<{
-    include: {
-      service: {
-        include: {
-          barbershop: true
-        }
+type BookingWithRelations = Prisma.BookingGetPayload<{
+  include: {
+    service: {
+      include: {
+        barbershop: true
       }
     }
-  }>
+  }
+}>
+
+interface BookingItemProps {
+  booking: Omit<BookingWithRelations, "service"> & {
+    service: Omit<BookingWithRelations["service"], "price"> & {
+      price: number
+    }
+  }
 }
 
 // TODO: receber agendamento como prop
