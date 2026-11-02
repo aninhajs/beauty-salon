@@ -1,11 +1,9 @@
-// Aqui será minha lista que será usada para busca no aplicativo de salão de beleza
-
-interface QuickSearch {
+interface QuickSearchOption {
   imageUrl: string
   title: string
 }
 
-export const quickSearchList: QuickSearch[] = [
+export const quickSearchOptions: QuickSearchOption[] = [
   {
     imageUrl: "/cabelo.svg",
     title: "Cabelo",
