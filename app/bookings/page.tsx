@@ -43,6 +43,7 @@ const Booking = async () => {
       },
     },
   })
+
   return (
     <>
       <Header />

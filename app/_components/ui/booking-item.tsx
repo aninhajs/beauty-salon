@@ -1,20 +1,37 @@
-import { Avatar, AvatarImage } from "@/app/_components/ui/ui/avatar"
-import Image from "next/image"
-import { Badge } from "@/app/_components/ui/ui/badge"
-import { Card, CardContent } from "@/app/_components/ui/ui/card"
-import { Booking, Prisma } from "@prisma/client"
-import { isFuture } from "date-fns"
-import { format } from "date-fns"
+"use client"
+
+import { Prisma } from "@prisma/client"
+import { Avatar, AvatarImage } from "./ui/avatar"
+import { Badge } from "./ui/badge"
+import { Card, CardContent } from "./ui/card"
+import { format, isFuture } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import {
   Sheet,
+  SheetClose,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet"
-import BookingSummary from "./booking-summary"
+import Image from "next/image"
 import PhoneItem from "./phone-items"
+import { Button } from "./ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "./ui/dialog"
+import { deleteBooking } from "../../_actions/delete-booking"
+import { toast } from "sonner"
+import { useState } from "react"
+import BookingSummary from "./booking-summary"
 
 interface BookingItemProps {
   booking: Prisma.BookingGetPayload<{
@@ -28,43 +45,54 @@ interface BookingItemProps {
   }>
 }
 
-// TODO: receber agendamento como prop e renderizar dinamicamente
+// TODO: receber agendamento como prop
 const BookingItem = ({ booking }: BookingItemProps) => {
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
   const {
     service: { barbershop },
   } = booking
-  const inConfirmed = isFuture(booking.date)
+  const isConfirmed = isFuture(booking.date)
+  const handleCancelBooking = async () => {
+    try {
+      await deleteBooking(booking.id)
+      setIsSheetOpen(false)
+      toast.success("Reserva cancelada com sucesso!")
+    } catch (error) {
+      console.error(error)
+      toast.error("Erro ao cancelar reserva. Tente novamente.")
+    }
+  }
+  const handleSheetOpenChange = (isOpen: boolean) => {
+    setIsSheetOpen(isOpen)
+  }
   return (
-    <Sheet>
-      <SheetTrigger className="w-full">
-        {/* Agenda */}
-
-        <Card className="mt-4 min-w-full">
-          <CardContent className="flex justify-between">
-            {/* Div esdquerda */}
-            <div className="flex flex-col gap-2 py-5">
+    <Sheet open={isSheetOpen} onOpenChange={handleSheetOpenChange}>
+      <SheetTrigger className="w-full min-w-[90%]">
+        <Card className="min-w-[90%]">
+          <CardContent className="flex justify-between p-0">
+            {/* ESQUERDA */}
+            <div className="flex flex-col gap-2 py-5 pl-5">
               <Badge
                 className="w-fit"
-                variant={inConfirmed ? "default" : "secondary"}
+                variant={isConfirmed ? "default" : "secondary"}
               >
-                {inConfirmed ? "Confirmado" : "finalizado"}
+                {isConfirmed ? "Confirmado" : "Finalizado"}
               </Badge>
-              <h3 className="font-bold">{booking.service.name}</h3>
+              <h3 className="font-semibold">{booking.service.name}</h3>
 
               <div className="flex items-center gap-2">
                 <Avatar className="h-6 w-6">
-                  <AvatarImage src={barbershop.imageUrl} />
+                  <AvatarImage src={booking.service.barbershop.imageUrl} />
                 </Avatar>
-                <p className="text-sm">{barbershop.name}</p>
+                <p className="text-sm">{booking.service.barbershop.name}</p>
               </div>
             </div>
-
-            {/* Div direita */}
+            {/* DIREITA */}
             <div className="flex flex-col items-center justify-center border-l-2 border-solid px-5">
               <p className="text-sm capitalize">
                 {format(booking.date, "MMMM", { locale: ptBR })}
               </p>
-              <p className="text-2xl font-bold">
+              <p className="text-2xl">
                 {format(booking.date, "dd", { locale: ptBR })}
               </p>
               <p className="text-sm">
@@ -74,18 +102,16 @@ const BookingItem = ({ booking }: BookingItemProps) => {
           </CardContent>
         </Card>
       </SheetTrigger>
-
-      <SheetContent className="w-[90%]">
+      <SheetContent className="w-[85%]">
         <SheetHeader>
-          <SheetTitle className="text-left">Detalhes do Agendamento</SheetTitle>
+          <SheetTitle className="text-left">Informações da Reserva</SheetTitle>
         </SheetHeader>
 
         <div className="relative mt-6 flex h-45 w-full items-end">
           <Image
-            src="/public/map(1).png"
-            alt={`Mapa do local do agendamento ${barbershop.name}`}
-            layout="fill"
-            objectFit="cover"
+            alt={`Mapa da barbearia ${booking.service.barbershop.name}`}
+            src="/map (1).png"
+            fill
             className="rounded-xl object-cover"
           />
 
@@ -94,7 +120,6 @@ const BookingItem = ({ booking }: BookingItemProps) => {
               <Avatar>
                 <AvatarImage src={barbershop.imageUrl} />
               </Avatar>
-
               <div>
                 <h3 className="font-bold">{barbershop.name}</h3>
                 <p className="text-xs">{barbershop.address}</p>
@@ -103,26 +128,71 @@ const BookingItem = ({ booking }: BookingItemProps) => {
           </Card>
         </div>
 
-        <div className="mt-6 mb-3">
+        <div className="mt-6">
           <Badge
             className="w-fit"
-            variant={inConfirmed ? "default" : "secondary"}
+            variant={isConfirmed ? "default" : "secondary"}
           >
-            {inConfirmed ? "Confirmado" : "finalizado"}
+            {isConfirmed ? "Confirmado" : "Finalizado"}
           </Badge>
-        </div>
 
-        <BookingSummary
-          service={booking.service}
-          barbershop={barbershop}
-          selectedDate={booking.date}
-        />
+          <div className="mt-6 mb-3">
+            <BookingSummary
+              barbershop={barbershop}
+              service={booking.service}
+              selectedDate={booking.date}
+            />
+          </div>
 
-        <div className="space-y-3">
-          {barbershop.phones.map((phone, index) => (
-            <PhoneItem key={index} phone={phone} />
-          ))}
+          <div className="space-y-3">
+            {barbershop.phones.map((phone, index) => (
+              <PhoneItem key={index} phone={phone} />
+            ))}
+          </div>
         </div>
+        <SheetFooter className="mt-6">
+          <div className="flex items-center gap-3">
+            <SheetClose asChild>
+              <Button variant="outline" className="w-full">
+                Voltar
+              </Button>
+            </SheetClose>
+            {isConfirmed && (
+              <Dialog>
+                <DialogTrigger className="w-full">
+                  <Button variant="destructive" className="w-full">
+                    Cancelar Reserva
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="w-[90%]">
+                  <DialogHeader>
+                    <DialogTitle>Você deseja cancelar sua reserva?</DialogTitle>
+                    <DialogDescription>
+                      Ao cancelar, você perderá sua reserva e não poderá
+                      recuperá-la. Essa ação é irreversível.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter className="flex flex-row gap-3">
+                    <DialogClose asChild>
+                      <Button variant="secondary" className="w-full">
+                        Voltar
+                      </Button>
+                    </DialogClose>
+                    <DialogClose className="w-full">
+                      <Button
+                        variant="destructive"
+                        onClick={handleCancelBooking}
+                        className="w-full"
+                      >
+                        Confirmar
+                      </Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   )
