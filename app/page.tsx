@@ -16,6 +16,9 @@ import Header from "@/app/_components/ui/header"
 import Image from "next/image"
 import Link from "next/link"
 import BookingItem from "./_components/ui/booking-item"
+import { getConfirmedBookings } from "./_data/get-confirmed-bookings"
+import { format } from "date-fns"
+import { ptBR } from "date-fns/locale"
 
 const Home = async () => {
   const session = await getServerSession(authOptions)
@@ -25,93 +28,91 @@ const Home = async () => {
       name: "desc",
     },
   })
-  const Bookings = session?.user
-    ? await db.booking.findMany({
-        where: {
-          userId: (session.user as { id: string }).id,
-        },
-        include: {
-          service: {
-            include: {
-              barbershop: true,
-            },
-          },
-        },
-      })
-    : []
+  const confirmedBookings = await getConfirmedBookings()
 
   return (
     <div>
+      {/* header */}
       <Header />
+      <div className="p-5">
+        {/* TEXTO */}
+        <h2 className="text-xl font-bold">
+          Olá, {session?.user ? session.user.name : "bem vindo"}!
+        </h2>
+        <p>
+          <span className="capitalize">
+            {format(new Date(), "EEEE, dd", { locale: ptBR })}
+          </span>
+          <span>&nbsp;de&nbsp;</span>
+          <span className="capitalize">
+            {format(new Date(), "MMMM", { locale: ptBR })}
+          </span>
+        </p>
 
-      {/* Texto */}
-      <div className="p-5 text-xl font-bold">
-        <h2 className="text-xl font-bold">Olá, Ana jeize!</h2>
-        <p>Quarta-feira, 30 de setembro.</p>
-
-        {/* Busca */}
+        {/* BUSCA */}
         <div className="mt-6">
           <Search />
         </div>
 
-        {/* Busca rápida */}
+        {/* BUSCA RÁPIDA */}
         <div className="mt-6 flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
-          {quickSearchOptions.map((item) => (
+          {quickSearchOptions.map((option) => (
             <Link
-              key={item.title}
-              href={`/barbershops?service=${encodeURIComponent(item.title)}`}
-              className={buttonVariants({
-                variant: "secondary",
-                className: "gap-2",
-              })}
+              key={option.title}
+              href={`/barbershops?service=${option.title}`}
+              className={`${buttonVariants({ variant: "secondary" })} gap-2`}
             >
               <Image
-                src={item.imageUrl}
-                alt={item.title}
-                width={14}
+                src={option.imageUrl}
+                width={16}
                 height={16}
+                alt={option.title}
               />
-              {item.title}
+              {option.title}
             </Link>
           ))}
         </div>
 
-        {/* Banner */}
+        {/* IMAGEM */}
         <div className="relative mt-6 h-37.5 w-full">
           <Image
-            src="/banner-02.png"
+            alt="Agende nos melhores com FSW Barber"
+            src="/banner-01.png"
             fill
-            alt="Banner"
-            style={{ objectFit: "cover" }}
-            className="rounded-xl"
+            className="rounded-xl object-cover"
           />
         </div>
 
-        {/* Agenda */}
-        <h2 className="mt-6 text-lg font-bold uppercase">Agendamentos</h2>
-        <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
-          {Bookings.map((booking) => (
-            <BookingItem
-              key={booking.id}
-              booking={{
-                ...booking,
-                service: {
-                  ...booking.service,
-                  price: booking.service.price.toNumber(),
-                },
-              }}
-            />
-          ))}
-        </div>
+        {confirmedBookings.length > 0 && (
+          <>
+            <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
+              Agendamentos
+            </h2>
 
-        <h2 className="mt-6 text-lg font-bold uppercase">Recomendados</h2>
+            {/* AGENDAMENTO */}
+            <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+              {confirmedBookings.map((booking) => (
+                <BookingItem
+                  key={booking.id}
+                  booking={JSON.parse(JSON.stringify(booking))}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
+          Recomendados
+        </h2>
         <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
           {barbershops.map((barbershop) => (
             <BarbershopItem key={barbershop.id} barbershop={barbershop} />
           ))}
         </div>
 
-        <h2 className="mt-6 text-lg font-bold uppercase">Populares</h2>
+        <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
+          Populares
+        </h2>
         <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
           {popularBarbershops.map((barbershop) => (
             <BarbershopItem key={barbershop.id} barbershop={barbershop} />

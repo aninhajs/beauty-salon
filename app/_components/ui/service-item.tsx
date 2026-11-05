@@ -25,7 +25,7 @@ import BookingSummary from "./booking-summary"
 import { useRouter } from "next/navigation"
 
 interface ServiceItemProps {
-  service: Omit<BarbershopService, "price"> & { price: number }
+  service: BarbershopService
   barbershop: Pick<Barbershop, "name">
 }
 
@@ -210,7 +210,30 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                       locale={ptBR}
                       selected={selectedDay}
                       onSelect={handleDateSelect}
-                      disabled={(date) => date < new Date()}
+                      disabled={{ before: new Date() }}
+                      styles={{
+                        weekday: {
+                          width: "100%",
+                          textTransform: "capitalize",
+                        },
+                        day: {
+                          width: "100%",
+                        },
+                        day_button: {
+                          width: "100%",
+                        },
+                        button_previous: {
+                          width: "32px",
+                          height: "32px",
+                        },
+                        button_next: {
+                          width: "32px",
+                          height: "32px",
+                        },
+                        month_caption: {
+                          textTransform: "capitalize",
+                        },
+                      }}
                     />
                   </div>
 
@@ -241,7 +264,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
                     <div className="p-5">
                       <BookingSummary
                         barbershop={barbershop}
-                        service={service}
+                        service={{ ...service, price: Number(service.price) }}
                         selectedDate={selectedDate}
                       />
                     </div>

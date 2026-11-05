@@ -19,15 +19,16 @@ import Image from "next/image"
 import PhoneItem from "./phone-items"
 import { Button } from "./ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "./ui/dialog"
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog"
 import { deleteBooking } from "../../_actions/delete-booking"
 import { toast } from "sonner"
 import { useState } from "react"
@@ -156,48 +157,35 @@ const BookingItem = ({ booking }: BookingItemProps) => {
             ))}
           </div>
         </div>
-        <SheetFooter className="mt-6">
-          <div className="flex items-center gap-3">
-            <SheetClose className="w-full">
-              <Button variant="outline" className="w-full">
-                Voltar
-              </Button>
-            </SheetClose>
-            {isConfirmed && (
-              <Dialog>
-                <DialogTrigger className="w-full">
-                  <Button variant="destructive" className="w-full">
-                    Cancelar Reserva
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="w-[90%]">
-                  <DialogHeader>
-                    <DialogTitle>Você deseja cancelar sua reserva?</DialogTitle>
-                    <DialogDescription>
-                      Ao cancelar, você perderá sua reserva e não poderá
-                      recuperá-la. Essa ação é irreversível...
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter className="flex flex-row gap-3">
-                    <DialogClose className="w-full">
-                      <Button variant="secondary" className="w-full">
-                        Voltar
-                      </Button>
-                    </DialogClose>
-                    <DialogClose className="w-full">
-                      <Button
-                        variant="destructive"
-                        onClick={handleCancelBooking}
-                        className="w-full"
-                      >
-                        Confirmar
-                      </Button>
-                    </DialogClose>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
+        <SheetFooter className="mt-6 gap-3">
+          <SheetClose render={<Button variant="outline" className="w-full" />}>
+            Voltar
+          </SheetClose>
+          {isConfirmed && (
+            <AlertDialog>
+              <AlertDialogTrigger className="w-full">
+                Cancelar Reserva
+              </AlertDialogTrigger>
+              <AlertDialogContent className="w-[90%]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Cancelar reserva?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Ao cancelar, você perderá sua reserva e não poderá
+                    recuperá-la. Essa ação é irreversível...
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Voltar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleCancelBooking}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Confirmar
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </SheetFooter>
       </SheetContent>
     </Sheet>

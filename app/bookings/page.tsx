@@ -1,84 +1,58 @@
 import Header from "@/app/_components/ui/header"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../lib/auth"
-import { db } from "../lib/prisma"
+// import { db } from "../lib/prisma"
 import BookingItem from "../_components/ui/booking-item"
+import { notFound } from "next/navigation"
+import { getConfirmedBookings } from "../_data/get-confirmed-bookings"
+import { getConcludedBookings } from "../_data/get-concluded-bookings"
 
-const Booking = async () => {
+const Bookings = async () => {
   const session = await getServerSession(authOptions)
   if (!session?.user) {
-    return null
+    // TODO: mostrar pop-up de login
+    return notFound()
   }
-
-  const confirmedBookings = await db.booking.findMany({
-    where: {
-      userId: (session.user as { id: string }).id,
-      date: {
-        gte: new Date(),
-      },
-    },
-
-    include: {
-      service: {
-        include: {
-          barbershop: true,
-        },
-      },
-    },
-  })
-
-  const concludedBookings = await db.booking.findMany({
-    where: {
-      userId: (session.user as { id: string }).id,
-      date: {
-        lt: new Date(),
-      },
-    },
-
-    include: {
-      service: {
-        include: {
-          barbershop: true,
-        },
-      },
-    },
-  })
+  const confirmedBookings = await getConfirmedBookings()
+  const concludedBookings = await getConcludedBookings()
 
   return (
     <>
       <Header />
-      <div className="space-y-4 p-5">
-        <h1 className="text-xl font-bold">Agendamentos </h1>
-        <h2 className="text-lg font-semibold">Confirmados</h2>
-
-        {confirmedBookings.map((booking) => (
-          <BookingItem
-            key={booking.id}
-            booking={{
-              ...booking,
-              service: {
-                ...booking.service,
-                price: booking.service.price.toNumber(),
-              },
-            }}
-          />
-        ))}
-        <h2 className="text-lg font-semibold">Finalizados</h2>
-        {concludedBookings.map((booking) => (
-          <BookingItem
-            key={booking.id}
-            booking={{
-              ...booking,
-              service: {
-                ...booking.service,
-                price: booking.service.price.toNumber(),
-              },
-            }}
-          />
-        ))}
+      <div className="space-y-3 p-5">
+        <h1 className="text-xl font-bold">Agendamentos</h1>
+        {confirmedBookings.length === 0 && concludedBookings.length === 0 && (
+          <p className="text-gray-400">Você não tem agendamentos.</p>
+        )}
+        {confirmedBookings.length > 0 && (
+          <>
+            <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
+              Confirmados
+            </h2>
+            {confirmedBookings.map((booking) => (
+              <BookingItem
+                key={booking.id}
+                booking={JSON.parse(JSON.stringify(booking))}
+              />
+            ))}
+          </>
+        )}
+        {concludedBookings.length > 0 && (
+          <>
+            <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
+              Finalizados
+            </h2>
+            {concludedBookings.map((booking) => (
+              <BookingItem
+                key={booking.id}
+                booking={JSON.parse(JSON.stringify(booking))}
+              />
+            ))}
+          </>
+        )}
       </div>
     </>
   )
 }
 
-export default Booking
+export default Bookings

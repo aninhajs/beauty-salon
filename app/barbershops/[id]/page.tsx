@@ -82,7 +82,7 @@ const BarberShops = async ({ params }: BarberShops) => {
               key={service.id}
               service={{
                 ...service,
-                price: service.price.toNumber(),
+                price: Number(service.price),
               }}
               barbershop={{ name: BarberShopPage.name }}
             />
