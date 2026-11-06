@@ -25,7 +25,9 @@ import BookingSummary from "./booking-summary"
 import { useRouter } from "next/navigation"
 
 interface ServiceItemProps {
-  service: BarbershopService
+  service: Omit<BarbershopService, "price"> & {
+    price: number
+  }
   barbershop: Pick<Barbershop, "name">
 }
 
